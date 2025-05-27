@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.2'
+
+      - name: Install dependencies
+        run: |
+          brew install swiftlint
+
+      - name: Clean build and run tests
+        run: |
+          xcodebuild clean test \
+            -project QPNTask.xcodeproj \
+            -scheme QPNTask \
+            -destination 'platform=iOS Simulator,id=F05643A8-C7B4-4823-944F-46B8EAD58319' \
+            -enableCodeCoverage YES
